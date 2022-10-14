@@ -1,9 +1,19 @@
-
+import React from "react";
 
 function Sort () {
+  const [dropDown, setDropDown] = React.useState(false);
+  const [selected, setSelected] = React.useState(0);
+  const onClickListItem = (index) => {
+    setSelected(index);
+    setDropDown(false);
+  }
+  const list = ['популярности', 'цене', 'алфавиту']
+  const sortName = list[selected]
+
+
     return (
-      <div class="sort">
-      <div class="sort__label">
+      <div className="sort">
+      <div className="sort__label">
         <svg
           width="10"
           height="6"
@@ -17,15 +27,21 @@ function Sort () {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span>популярности</span>
+        <span  onClick={() => setDropDown(!dropDown)}>{sortName}</span>
       </div>
-      <div class="sort__popup">
+      {
+        dropDown && (
+          <div className="sort__popup">
         <ul>
-          <li class="active">популярности</li>
-          <li>цене</li>
-          <li>алфавиту</li>
+        {list.map((item, index) => (
+          <li key={index} 
+          onClick={() => onClickListItem(index)} 
+          className={selected===index ? 'active' : ''}>{item}</li>
+        ))}
         </ul>
       </div>
+        )
+      }
     </div>
     )
   }

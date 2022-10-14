@@ -1,28 +1,28 @@
 import React from "react";
 
-function PizzaBlock({title, price, imageUrl, sizes, types}) {
+function PizzaBlock({name, price, imageUrl, sizes, types}) {
   const typeNames = ['тонкое', 'традиционное'];
 
   const[activeItem, setActiveItem] = React.useState(0)
 
     return (
       <div className="pizza-block-wrapper">
-                  <div class="pizza-block">
+        <div className="pizza-block">
         <img
           className="pizza-block__image"
           src={imageUrl}
           alt="Pizza"
         />
-        <h4 className="pizza-block__title">{title}</h4>
+        <h4 className="pizza-block__title">{name}</h4>
         <div className="pizza-block__selector">
           <ul>
           {
-              types.map((type, index)=>(<li  onClick={() => setActiveItem(index)} className={activeItem===index ? 'active' : ''}>{typeNames[type]} </li>))
+              types.map((type, index)=>(<li key={index} onClick={() => setActiveItem(index)} className={activeItem===index ? 'active' : ''}>{typeNames[type]} </li>))
             }
           </ul>
           <ul>
             {
-              sizes.map((size, index)=>(<li onClick={() => setActiveItem(index)} className={activeItem===index ? 'active' : ''}>{size}</li>))
+              sizes.map((size, index)=>(<li key={index} onClick={() => setActiveItem(index)} className={activeItem===index ? 'active' : ''}>{size}</li>))
             }
           </ul>
         </div>
