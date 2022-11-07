@@ -1,19 +1,35 @@
 import React from "react";
 import ReactPaginate from 'react-paginate';
-import Pagination from '../components/Pagination/index'
+import Pagination from '../components/Pagination/index';
+import { SearchContext } from "../App";
+import { useSelector, useDispatch} from 'react-redux';
 
+import { setCategoryId } from "../redux/slices/filterSlice";
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 
-export const Home = ({searchValue}) => {
+export const Home = () => {
+  const dispatch = useDispatch()
+  const categoryId = useSelector(state => state.filter.categoryId);
+  console.log(categoryId)
+  const sortType = useSelector(state => state.filter.sort.sortProperty);
+
+ // const setCategoryId = () => {}
+
+  const {searchValue} = React.useContext(SearchContext)
     const [items, setItems] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
-    const [categoryId, setCategoryId] = React.useState(0);
+   // const [categoryId, setCategoryId] = React.useState(0);
     const[currentPage, setCurrentPage] = React.useState(1)
-    const [sortType, setSortType] = React.useState( {name:'популярности', sortProperty:'rating'});
-    const search = searchValue ? `&search=${searchValue}` : ''
+
+    const search = searchValue ? `&search=${searchValue}` : '';
+
+    const onChangeCategory = (id) => {
+      console.log(id)
+      dispatch(setCategoryId(id));
+    }
   
   
   React.useEffect(() => {
@@ -31,8 +47,8 @@ export const Home = ({searchValue}) => {
     return (
         <div className="container">
         <div className="content__top">
-        <Categories value={categoryId} onChangeCategory={(i) => setCategoryId(i)}/>
-        <Sort  value={sortType} onChangeSort={(i) => setSortType(i)}/>
+        <Categories value={categoryId} onChangeCategory={onChangeCategory}/>
+        <Sort/>
         </div>
         <h2 className="content__title">Все пиццы</h2>
         <div className="content__items">
