@@ -3,6 +3,7 @@ import ReactPaginate from 'react-paginate';
 import Pagination from '../components/Pagination/index';
 import { SearchContext } from "../App";
 import { useSelector, useDispatch} from 'react-redux';
+import axios from "axios";
 
 import { setCategoryId } from "../redux/slices/filterSlice";
 import Categories from '../components/Categories';
@@ -34,14 +35,21 @@ export const Home = () => {
   
   React.useEffect(() => {
     setIsLoading(true)
-    fetch(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
-    .then((res) => res.json())
-    .then((arr) => {
-      setItems(arr);
+    // fetch(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
+    // .then((res) => res.json())
+    // .then((arr) => {
+    //   setItems(arr);
+    //   setIsLoading(false)
+    // });
+    axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
+    .then(res => {
+      console.log(res)
+      setItems(res.data);
       setIsLoading(false)
-    });
+    })
     window.scrollTo(0, 0);
   }, [categoryId, sortType, searchValue, currentPage])
+
 
   const pizzas =  items.map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
     return (
