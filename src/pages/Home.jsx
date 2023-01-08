@@ -17,6 +17,8 @@ import Skeleton from '../components/PizzaBlock/Skeleton';
 export const Home = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const isSearch = React.useRef(false)
+  const isMounted = React.useRef(false)
   const categoryId = useSelector(state => state.filter.categoryId);
   const sortType = useSelector(state => state.filter.sort.sortProperty);
 
@@ -33,6 +35,15 @@ export const Home = () => {
     const onChangeCategory = (id) => {
       dispatch(setCategoryId(id));
     }
+    
+    const fetchPizzas = () => {
+      setIsLoading(true)
+      axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
+      .then(res => {
+        setItems(res.data);
+        setIsLoading(false)
+      })
+    }
 
     React.useEffect(() => {
       if(window.location.search) {
@@ -46,34 +57,33 @@ export const Home = () => {
             sort
           })
         )
+        isSearch.current = true;
       }
     }, [])
   
   
   React.useEffect(() => {
-    setIsLoading(true)
-    // fetch(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
-    // .then((res) => res.json())
-    // .then((arr) => {
-    //   setItems(arr);
-    //   setIsLoading(false)
-    // });
-    axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
-    .then(res => {
-      setItems(res.data);
-      setIsLoading(false)
-    })
+
     window.scrollTo(0, 0);
+
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+
+    isSearch.current = false
   }, [categoryId, sortType, searchValue, currentPage])
 
   React.useEffect(() => {
-    const queryString = qs.stringify({
-      sortProperty: sortType,
-      categoryId,
-      currentPage
-    })
-   console.log(queryString)
-    navigate(`?${queryString}`)
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sortType,
+        categoryId,
+        currentPage
+      })
+     console.log(queryString)
+      navigate(`?${queryString}`)
+    }
+    isMounted.current = true
   }, [categoryId, sortType, searchValue, currentPage])
 
 
