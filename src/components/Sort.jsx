@@ -11,6 +11,7 @@ export  const sortList = [
 function Sort () {
   const dispatch = useDispatch();
   const sort = useSelector(state => state.filter.sort)
+  const sortRef = React.useRef()
 
   const [dropDown, setDropDown] = React.useState(false);
   const [selected, setSelected] = React.useState(0);
@@ -19,6 +20,20 @@ function Sort () {
     dispatch(setSort(obj))
     setDropDown(false);
   }
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+     if (!event.path.includes(sortRef.current)) {
+          setDropDown(false)
+        }
+    }
+    document.body.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
+
   const list = [
     {name:'популярности', sortProperty:'rating'}, 
     {name:'цене', sortProperty: 'price'}, 
@@ -26,7 +41,7 @@ function Sort () {
   ]
 
     return (
-      <div className="sort">
+      <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
