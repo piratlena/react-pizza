@@ -303,17 +303,18 @@ body {
   }
 
   &--empty {
-    margin: 0 auto;
+    margin: 60px auto;
     width: 560px;
     text-align: center;
 
     h2 {
-      font-size: 32px;
+      font-size: 36px;
       margin-bottom: 10px;
+      font-weight: 700;
     }
 
     p {
-      font-size: 18px;
+      font-size: 20px;
       line-height: 145.4%;
       letter-spacing: 0.01em;
       color: #777777;

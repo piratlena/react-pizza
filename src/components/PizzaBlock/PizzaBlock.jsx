@@ -19,7 +19,7 @@ function PizzaBlock({name, price, imageUrl, sizes, types, id}) {
       price,
       imageUrl,
       type: typeNames[activeType],
-      size: activeSize
+      size: sizes[activeSize],
     };
     dispatch(addItem(item))
   }
@@ -41,7 +41,7 @@ function PizzaBlock({name, price, imageUrl, sizes, types, id}) {
           </ul>
           <ul>
             {
-              sizes.map((size, index)=>(<li key={index} onClick={() => setActiveType(index)} className={activeType===index ? 'active' : ''}>{size}</li>))
+              sizes.map((size, index)=>(<li key={index} onClick={() => setActiveSize(index)} className={activeSize===index ? 'active' : ''}>{size}</li>))
             }
           </ul>
         </div>
