@@ -23,16 +23,14 @@ function Sort () {
 
   React.useEffect(() => {
     const handleClickOutside = (event) => {
-     if (!event.path.includes(sortRef.current)) {
-          setDropDown(false)
-        }
-    }
-    document.body.addEventListener('click', handleClickOutside)
+      let path = event.composedPath().includes(sortRef.current);
+      if (!path) setDropDown(false);
+    };
 
-    return () => {
-      document.body.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
+    document.body.addEventListener('click', handleClickOutside);
+
+    return () => document.body.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const list = [
     {name:'популярности', sortProperty:'rating'}, 
