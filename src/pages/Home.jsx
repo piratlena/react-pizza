@@ -7,6 +7,7 @@ import axios from "axios";
 import qs from 'qs';
 import { useNavigate } from "react-router-dom";
 import { sortList } from "../components/Sort";
+import {fetchPizzas, setItems} from '../redux/slices/pizzaSlice'
 
 import { setCategoryId, setCurrentPage, setFilters } from "../redux/slices/filterSlice";
 import Categories from '../components/Categories';
@@ -25,40 +26,33 @@ export const Home = () => {
  // const setCategoryId = () => {}
 
   const {searchValue} = React.useContext(SearchContext)
-    const [items, setItems] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+  const items = useSelector(state => state.pizza.items)
+  //const [items, setItems] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
    // const [categoryId, setCategoryId] = React.useState(0);
-    const[currentPage, setCurrentPage] = React.useState(1)
+  const[currentPage, setCurrentPage] = React.useState(1)
 
-    const search = searchValue ? `&search=${searchValue}` : '';
+  const search = searchValue ? `&search=${searchValue}` : '';
 
     const onChangeCategory = (id) => {
       dispatch(setCategoryId(id));
     }
     
-    const fetchPizzas = () => {
+    const fetchPizzas = async() => {
       setIsLoading(true)
-      axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType.sortProperty}&order=desc${search}`)
-      .then(res => {
-        setItems(res.data);
+      try {
+        const {data} = await axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType}&order=desc${search}`)
+      dispatch(setItems(data))
+      } catch(error) {
+        console.log("Error")
+      } finally {
         setIsLoading(false)
-      })
+      }
+      window.scrollTo(0, 0)
     }
 
     React.useEffect(() => {
-      if(window.location.search) {
-        const params = qs.parse(window.location.search.substring(1))
-
-        const sort = sortList.find(obj => obj.sortProperty === params.sortProperty)
-
-        dispatch(
-          setFilters({
-            ...params,
-            sort
-          })
-        )
-        isSearch.current = true;
-      }
+      fetchPizzas()
     }, [])
   
   
