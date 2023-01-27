@@ -1,25 +1,26 @@
 import React from "react";
-import { useSelector, useDispatch} from 'react-redux';
-import { setSort} from '../redux/slices/filterSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { setSort } from "../redux/slices/filterSlice";
+import { selectSort } from "../redux/slices/filterSlice";
 
-export  const sortList = [
-  {name:'популярности', sortProperty:'rating'}, 
-  {name:'цене', sortProperty: 'price'}, 
-  {name:'алфавиту', sortProperty: 'name'}
-]
+export const sortList = [
+  { name: "популярности", sortProperty: "rating" },
+  { name: "цене", sortProperty: "price" },
+  { name: "алфавиту", sortProperty: "name" },
+];
 
-function Sort () {
+function Sort() {
   const dispatch = useDispatch();
-  const sort = useSelector(state => state.filter.sort)
-  const sortRef = React.useRef()
+  const sort = useSelector(selectSort);
+  const sortRef = React.useRef();
 
   const [dropDown, setDropDown] = React.useState(false);
   const [selected, setSelected] = React.useState(0);
 
   const onClickListItem = (obj) => {
-    dispatch(setSort(obj))
+    dispatch(setSort(obj));
     setDropDown(false);
-  }
+  };
 
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,19 +28,19 @@ function Sort () {
       if (!path) setDropDown(false);
     };
 
-    document.body.addEventListener('click', handleClickOutside);
+    document.body.addEventListener("click", handleClickOutside);
 
-    return () => document.body.removeEventListener('click', handleClickOutside);
+    return () => document.body.removeEventListener("click", handleClickOutside);
   }, []);
 
   const list = [
-    {name:'популярности', sortProperty:'rating'}, 
-    {name:'цене', sortProperty: 'price'}, 
-    {name:'алфавиту', sortProperty: 'name'}
-  ]
+    { name: "популярности", sortProperty: "rating" },
+    { name: "цене", sortProperty: "price" },
+    { name: "алфавиту", sortProperty: "name" },
+  ];
 
-    return (
-      <div ref={sortRef} className="sort">
+  return (
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -54,22 +55,26 @@ function Sort () {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span  onClick={() => setDropDown(!dropDown)}>{sort.name}</span>
+        <span onClick={() => setDropDown(!dropDown)}>{sort.name}</span>
       </div>
-      {
-        dropDown && (
-          <div className="sort__popup">
-        <ul>
-        {list.map((obj, i) => (
-          <li key={i} 
-          onClick={() => onClickListItem(obj)} 
-          className={sort.sortProperty===obj.sortProperty ? 'active' : ''}>{obj.name}</li>
-        ))}
-        </ul>
-      </div>
-        )
-      }
+      {dropDown && (
+        <div className="sort__popup">
+          <ul>
+            {list.map((obj, i) => (
+              <li
+                key={i}
+                onClick={() => onClickListItem(obj)}
+                className={
+                  sort.sortProperty === obj.sortProperty ? "active" : ""
+                }
+              >
+                {obj.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
-    )
-  }
-  export default Sort;
+  );
+}
+export default Sort;
