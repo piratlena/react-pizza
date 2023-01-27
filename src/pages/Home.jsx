@@ -1,15 +1,11 @@
 import React from "react";
-import ReactPaginate from 'react-paginate';
 import Pagination from '../components/Pagination/index';
 import { SearchContext } from "../App";
 import { useSelector, useDispatch} from 'react-redux';
-import axios from "axios";
 import qs from 'qs';
 import { useNavigate } from "react-router-dom";
-import { sortList } from "../components/Sort";
-import {fetchPizzas, setItems} from '../redux/slices/pizzaSlice'
-
-import { setCategoryId, setCurrentPage, setFilters } from "../redux/slices/filterSlice";
+import {fetchPizzas} from '../redux/slices/pizzaSlice'
+import { setCategoryId} from "../redux/slices/filterSlice";
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock/PizzaBlock';
@@ -21,16 +17,15 @@ export const Home = () => {
   const isSearch = React.useRef(false)
   const isMounted = React.useRef(false)
   const categoryId = useSelector(state => state.filter.categoryId);
-  const sortType = useSelector(state => state.filter.sort.sortProperty);
+  const sortType = useSelector(state => state.filter.sort);
 
  // const setCategoryId = () => {}
 
   const {searchValue} = React.useContext(SearchContext)
-  const items = useSelector(state => state.pizza.items)
-  //const [items, setItems] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-   // const [categoryId, setCategoryId] = React.useState(0);
+  const {items, status} = useSelector(state => state.pizza)
+  const [isLoading, setIsLoading] = React.useState(false);
   const[currentPage, setCurrentPage] = React.useState(1)
+
 
   const search = searchValue ? `&search=${searchValue}` : '';
 
@@ -38,34 +33,25 @@ export const Home = () => {
       dispatch(setCategoryId(id));
     }
     
-    const fetchPizzas = async() => {
-      setIsLoading(true)
-      try {
-        const {data} = await axios.get(`https://634cd045acb391d34a8c8718.mockapi.io/items?page=${currentPage}&limit=4&${categoryId > 0 ? `category=${categoryId}` : '' }&sortBy=${sortType}&order=desc${search}`)
-      dispatch(setItems(data))
-      } catch(error) {
-        console.log("Error")
-      } finally {
-        setIsLoading(false)
-      }
+    const getPizzas = async() => {
+      dispatch(fetchPizzas({
+        categoryId, sortType, searchValue, currentPage, search
+      }))
       window.scrollTo(0, 0)
     }
 
-    React.useEffect(() => {
-      fetchPizzas()
+     React.useEffect(() => {
+      getPizzas()
     }, [])
   
   
   React.useEffect(() => {
-
-    window.scrollTo(0, 0);
-
-    if (!isSearch.current) {
-      fetchPizzas();
+  window.scrollTo(0, 0);
+  if (!isSearch.current) {
+      getPizzas();
     }
-
-    isSearch.current = false
-  }, [categoryId, sortType, searchValue, currentPage])
+   isSearch.current = false
+  }, [categoryId, sortType.sortProperty, searchValue, currentPage])
 
   React.useEffect(() => {
     if (isMounted.current) {
@@ -78,7 +64,7 @@ export const Home = () => {
       navigate(`?${queryString}`)
     }
     isMounted.current = true
-  }, [categoryId, sortType, searchValue, currentPage])
+  }, [categoryId, sortType.sortProperty, searchValue, currentPage])
 
 
   const pizzas =  items.map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
@@ -89,12 +75,20 @@ export const Home = () => {
         <Sort/>
         </div>
         <h2 className="content__title">Все пиццы</h2>
-        <div className="content__items">
+
+        {status==='error' ? 
+          <div className="content__error-info">
+              <h2>Произошла ошибка<icon>😕</icon></h2>
+            <p>
+             К сожалению, не удалось получить питсы. Попробуйте повторить попытку позже.
+            </p>
+          </div> :
+          <div className="content__items">
         {
-         isLoading ? [...new Array(8)].map((_, index) => <Skeleton key={index}/>)
+         status==='loading' ? [...new Array(8)].map((_, index) => <Skeleton key={index}/>)
          :pizzas
         }
-        </div>
+        </div>}
        <Pagination
        onChangePage={number => setCurrentPage(number)}/>
         </div>
