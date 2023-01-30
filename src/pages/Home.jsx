@@ -1,5 +1,6 @@
 import React from "react";
 import Pagination from "../components/Pagination/index";
+import { Link } from "react-router-dom";
 import { SearchContext } from "../App";
 import { useSelector, useDispatch } from "react-redux";
 import qs from "qs";
@@ -66,7 +67,11 @@ export const Home = () => {
     isMounted.current = true;
   }, [categoryId, sortType.sortProperty, searchValue, currentPage]);
 
-  const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+  const pizzas = items.map((obj) => (
+    <Link key={obj.id} to={`pizza/${obj.id}`}>
+      <PizzaBlock {...obj} />
+    </Link>
+  ));
   return (
     <div className="container">
       <div className="content__top">
