@@ -1,14 +1,13 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./scss/app.scss";
-
+import FullPizza from "./pages/FullPizza";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import NotFound from "./components/NotFoundBlock/NotFound";
 import Cart from "./pages/Cart";
-import FullPizza from "./pages/FullPizza";
 
-export const SearchContext = React.createContext();
+export const SearchContext = React.createContext({});
 
 function App() {
   const [searchValue, setSearchValue] = React.useState("");
