@@ -12,18 +12,22 @@ export const sortList = [
 function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector(selectSort);
-  const sortRef = React.useRef();
+  const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [dropDown, setDropDown] = React.useState(false);
   const [selected, setSelected] = React.useState(0);
+  type SortItem = {
+    name: string;
+    sortProperty: string;
+  };
 
-  const onClickListItem = (obj) => {
+  const onClickListItem = (obj: SortItem) => {
     dispatch(setSort(obj));
     setDropDown(false);
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       let path = event.composedPath().includes(sortRef.current);
       if (!path) setDropDown(false);
     };
@@ -33,7 +37,7 @@ function Sort() {
     return () => document.body.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const list = [
+  const list: SortItem[] = [
     { name: "популярности", sortProperty: "rating" },
     { name: "цене", sortProperty: "price" },
     { name: "алфавиту", sortProperty: "name" },
