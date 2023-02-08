@@ -1,10 +1,11 @@
 import React, { FC } from "react";
 import { useDispatch } from "react-redux";
 import { addItem, minusItem, removeItem } from "../redux/cart/cartSlice";
+import { CartItem as CartItemType } from "../redux/cart/types";
 
 type CartItemProps = {
   id: string;
-  name: string;
+  title: string;
   type: string;
   price: number;
   imageUrl: string;
@@ -13,7 +14,7 @@ type CartItemProps = {
 };
 const CartItem: FC<CartItemProps> = ({
   id,
-  name,
+  title,
   type,
   price,
   imageUrl,
@@ -26,7 +27,7 @@ const CartItem: FC<CartItemProps> = ({
     dispatch(
       addItem({
         id,
-      })
+      } as CartItemType)
     );
   };
 
@@ -46,7 +47,7 @@ const CartItem: FC<CartItemProps> = ({
         <img className="pizza-block__image" src={imageUrl} alt="Pizza" />
       </div>
       <div className="cart__item-info">
-        <h3>{name}</h3>
+        <h3>{title}</h3>
         <p>
           {type}, {size} см.
         </p>

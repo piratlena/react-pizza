@@ -1,25 +1,35 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setSort } from "../redux/filters/filterSlice";
-import { selectSort } from "../redux/filters/filterSlice";
+import { Sort as SortType, SortPropertyEnum } from "../redux/filters/types";
 
-export const sortList = [
-  { name: "популярности", sortProperty: "rating" },
-  { name: "цене", sortProperty: "price" },
-  { name: "алфавиту", sortProperty: "name" },
+type SortItem = {
+  name: string;
+  sortProperty: SortPropertyEnum;
+};
+
+type PopupClick = MouseEvent & {
+  path: Node[];
+};
+
+type SortPopupProps = {
+  value: SortType;
+};
+
+export const list: SortItem[] = [
+  { name: "популярности (DESC)", sortProperty: SortPropertyEnum.RATING_DESC },
+  { name: "популярности (ASC)", sortProperty: SortPropertyEnum.RATING_ASC },
+  { name: "цене (DESC)", sortProperty: SortPropertyEnum.PRICE_DESC },
+  { name: "цене (ASC)", sortProperty: SortPropertyEnum.PRICE_ASC },
+  { name: "алфавиту (DESC)", sortProperty: SortPropertyEnum.TITLE_DESC },
+  { name: "алфавиту (ASC)", sortProperty: SortPropertyEnum.TITLE_ASC },
 ];
 
-function Sort() {
+export const Sort: React.FC<SortPopupProps> = React.memo(({ value }) => {
   const dispatch = useDispatch();
-  const sort: { sortProperty: string; name: string } = useSelector(selectSort);
   const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [dropDown, setDropDown] = React.useState(false);
-  const [selected, setSelected] = React.useState(0);
-  type SortItem = {
-    name: string;
-    sortProperty: string;
-  };
 
   const onClickListItem = (obj: SortItem) => {
     dispatch(setSort(obj));
@@ -27,9 +37,10 @@ function Sort() {
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      // let path = event.composedPath().includes(sortRef.current);
-      if (sortRef.current && !e.composedPath().includes(sortRef.current)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const _event = event as PopupClick;
+
+      if (sortRef.current && !_event.path.includes(sortRef.current)) {
         setDropDown(false);
       }
     };
@@ -38,12 +49,6 @@ function Sort() {
 
     return () => document.body.removeEventListener("click", handleClickOutside);
   }, []);
-
-  const list: SortItem[] = [
-    { name: "популярности", sortProperty: "rating" },
-    { name: "цене", sortProperty: "price" },
-    { name: "алфавиту", sortProperty: "name" },
-  ];
 
   return (
     <div ref={sortRef} className="sort">
@@ -61,7 +66,7 @@ function Sort() {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setDropDown(!dropDown)}>{sort.name}</span>
+        <span onClick={() => setDropDown(!dropDown)}>{value.name}</span>
       </div>
       {dropDown && (
         <div className="sort__popup">
@@ -71,7 +76,7 @@ function Sort() {
                 key={i}
                 onClick={() => onClickListItem(obj)}
                 className={
-                  sort.sortProperty === obj.sortProperty ? "active" : ""
+                  value.sortProperty === obj.sortProperty ? "active" : ""
                 }
               >
                 {obj.name}
@@ -82,5 +87,4 @@ function Sort() {
       )}
     </div>
   );
-}
-export default Sort;
+});

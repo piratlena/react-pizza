@@ -1,40 +1,32 @@
-import React, { FC, useState, useCallback, useRef } from "react";
-import styles from "./Search.module.scss";
-import { SearchContext } from "../../App";
+import React from "react";
 import { useDispatch } from "react-redux";
 import debounce from "lodash.debounce";
+
+import styles from "./Search.module.scss";
 import { setSearchValue } from "../../redux/filters/filterSlice";
 
-const Search: FC = () => {
-  //   const { searchValue, setSearchValue } = React.useContext<string>(SearchContext);
-  //   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  //   const onClickClear = () => {
-  //     setSearchValue("");
-  //     inputRef.current?.focus();
-  //   };
-
+export const Search: React.FC = () => {
   const dispatch = useDispatch();
+  const [value, setValue] = React.useState<string>("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const [value, setValue] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const onResetInput = () => {
-    setValue("");
+  const onClickClear = () => {
     dispatch(setSearchValue(""));
+    setValue("");
     inputRef.current?.focus();
   };
 
-  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    onChangeSearchValue(e.target.value);
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onChangeSearchValue = useCallback(
-    debounce((str: string) => dispatch(setSearchValue(str)), 750),
+  const updateSearchValue = React.useCallback(
+    debounce((str: string) => {
+      dispatch(setSearchValue(str));
+    }, 150),
     []
   );
+
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+    updateSearchValue(event.target.value);
+  };
 
   return (
     <div className={styles.root}>
@@ -57,7 +49,7 @@ const Search: FC = () => {
       />
       {value && (
         <svg
-          onClick={onResetInput}
+          onClick={onClickClear}
           className={styles.clear}
           data-name="Layer 1"
           height="200"

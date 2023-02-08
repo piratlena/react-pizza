@@ -1,15 +1,17 @@
 import React, { FC } from "react";
 import "../scss/app.scss";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FullPizza: FC = () => {
-  const { id } = useParams();
   const [pizza, setPizza] = React.useState<{
     imageUrl: string;
-    name: string;
+    title: string;
     price: number;
   }>();
+
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     async function fetchPizza() {
@@ -20,6 +22,7 @@ const FullPizza: FC = () => {
         setPizza(data);
       } catch (error) {
         alert("Ошибка при  получении пиццы");
+        navigate("/");
       }
     }
     fetchPizza();
@@ -31,7 +34,7 @@ const FullPizza: FC = () => {
   return (
     <div className="container">
       <img src={pizza.imageUrl} alt="pizza" />
-      <h2>{pizza.name}</h2>
+      <h2>{pizza.title}</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus alias
         dolore unde, ullam ratione, sint debitis iste a odit vel ad quasi beatae
