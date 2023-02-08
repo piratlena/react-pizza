@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import logoPizza from "../assets/img/pizza-logo.svg";
 import Search from "./Search/index";
 import { useSelector } from "react-redux";
-import { selectCart } from "../redux/slices/cartSlice";
+import { selectCart } from "../redux/cart/cartSlice";
 
 function Header() {
   const { items, totalPrice } = useSelector(selectCart);

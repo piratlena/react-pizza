@@ -4,7 +4,7 @@ import {
   addItem,
   CartItem,
   selectCartItemById,
-} from "../../redux/slices/cartSlice";
+} from "../../redux/cart/cartSlice";
 
 type PizzaBlockProps = {
   id: string;
