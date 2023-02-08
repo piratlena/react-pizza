@@ -11,7 +11,7 @@ export const sortList = [
 
 function Sort() {
   const dispatch = useDispatch();
-  const sort = useSelector(selectSort);
+  const sort: { sortProperty: string; name: string } = useSelector(selectSort);
   const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [dropDown, setDropDown] = React.useState(false);
@@ -27,9 +27,11 @@ function Sort() {
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      let path = event.composedPath().includes(sortRef.current);
-      if (!path) setDropDown(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      // let path = event.composedPath().includes(sortRef.current);
+      if (sortRef.current && !e.composedPath().includes(sortRef.current)) {
+        setDropDown(false);
+      }
     };
 
     document.body.addEventListener("click", handleClickOutside);

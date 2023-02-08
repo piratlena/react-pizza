@@ -1,8 +1,8 @@
-import React from "react";
+import React, { FC } from "react";
 import Pagination from "../components/Pagination/index";
 import { Link } from "react-router-dom";
 import { SearchContext } from "../App";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
 import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
@@ -11,31 +11,32 @@ import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
+import { useAppDispatch } from "../redux/store";
 
-export const Home = () => {
+const Home: FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
-  const categoryId = useSelector((state) => state.filter.categoryId);
-  const sortType = useSelector((state) => state.filter.sort);
-  const { searchValue } = React.useContext(SearchContext);
+  const categoryId = useSelector<any>((state) => state.filter.categoryId);
+  const sortType = useSelector<any>((state) => state.filter.sort.sortProperty);
+  const { searchValue } = React.useContext<any>(SearchContext);
   const { items, status } = useSelector(selectPizzaData);
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const search = searchValue ? `&search=${searchValue}` : "";
 
-  const onChangeCategory = (id) => {
+  const onChangeCategory = (id: number) => {
     dispatch(setCategoryId(id));
   };
 
   const getPizzas = async () => {
     dispatch(
       fetchPizzas({
-        categoryId,
-        sortType,
+        categoryId: String(currentPage),
+        sortType: String(currentPage),
         searchValue,
-        currentPage,
+        currentPage: String(currentPage),
         search,
       })
     );
@@ -86,7 +87,7 @@ export const Home = () => {
             Произошла ошибка<div>😕</div>
           </h2>
           <p>
-            К сожалению, не удалось получить питсы. Попробуйте повторить попытку
+            К сожалению, не удалось получить пиццы. Попробуйте повторить попытку
             позже.
           </p>
         </div>
